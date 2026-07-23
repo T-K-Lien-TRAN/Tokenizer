@@ -31,7 +31,7 @@ Other EVM platforms could run the same interface, but BNB Smart Chain Testnet ma
 
 ## Language and tools
 
-- **Solidity** implements the token on an EVM-compatible blockchain.
+- **Solidity** implements the token on an EVM-compatible blockchain.(Ethereum Virtual Machine)
 - **OpenZeppelin ERC20** supplies reviewed standard balance, transfer, allowance, and event logic instead of duplicating that logic manually.
 - **Hardhat 3** compiles, tests, runs a local chain, connects to BNB Smart Chain Testnet, and manages deployment.
 - **TypeScript and ethers** are used for readable automated tests and interaction scripts.
@@ -135,6 +135,30 @@ cd deployment
 npx hardhat keystore set BSC_TESTNET_RPC_URL
 npx hardhat keystore set BSC_TESTNET_PRIVATE_KEY
 ```
+BSC_TESTNET_RPC_URL: https://bsc-testnet-dataseed.bnbchain.org
+https://metamask.io/
+moz-extension://6b205840-bcbd-490e-8d66-ad68e0c5058f/home.html#/unlock
+lientranthikim@gmail.com
+9NHO10thuong
+
+Since you use Firefox:
+
+On metamask.io, click Get MetaMask.
+Select Firefox and install the official MetaMask extension.
+After installation, click the MetaMask fox icon in Firefox’s extensions menu.
+Choose Create a new wallet and complete the setup. Carefully store the Secret Recovery Phrase offline and never share it.
+
+Once your wallet is open, create the dedicated deployment account:
+
+Click the account selector at the top of MetaMask.
+Select Add account or hardware wallet.
+Select Ethereum account or Create new account.
+Name it:
+BSC Testnet Deployer
+Click Create.
+
+This Ethereum-format account can be used on BNB Smart Chain Testnet. Keep it exclusively for testnet deployment and do not transfer real funds into it.
+
 
 Deploy:
 
