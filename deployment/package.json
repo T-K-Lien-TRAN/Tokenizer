@@ -1,0 +1,32 @@
+{
+  "name": "tokenizer42-deployment",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hardhat development, testing, and deployment tools for Tokenizer42.",
+  "scripts": {
+    "sync:contract": "node scripts/sync-contract.mjs",
+    "compile": "npm run sync:contract && hardhat compile",
+    "test": "npm run sync:contract && hardhat test",
+    "node": "npm run sync:contract && hardhat node",
+    "deploy:local": "npm run sync:contract && hardhat ignition deploy ignition/modules/TokenizerToken.ts --network localhost",
+    "deploy:bsc-testnet": "npm run sync:contract && hardhat ignition deploy ignition/modules/TokenizerToken.ts --network bscTestnet",
+    "inspect:bsc-testnet": "hardhat run scripts/inspect-token.ts --network bscTestnet",
+    "transfer:bsc-testnet": "hardhat run scripts/transfer-token.ts --network bscTestnet",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "5.6.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "3.0.7",
+    "@types/chai": "5.2.3",
+    "@types/mocha": "10.0.10",
+    "@types/node": "22.19.15",
+    "hardhat": "3.11.0",
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

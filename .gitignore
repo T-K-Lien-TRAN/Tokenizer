@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Hardhat output
+artifacts/
+cache/
+types/
+coverage/
+ignition/deployments/
+
+# Build output
+dist/
+bundle/
+
+# Secrets and wallets
+.env
+.env.*
+*.pem
+*.key
+*.keystore
+*.wallet
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Video files are forbidden in the submitted repository
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
