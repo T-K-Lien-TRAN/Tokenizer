@@ -1,212 +1,363 @@
-# Tokenizer42 (`TK42`)
+# Tokenizer42
 
-Tokenizer42 is a fixed-supply fungible token created for the 42 **Tokenizer — Build your own token** exercise. The contract follows the ERC-20 interface and is intended to be deployed as a BEP-20-compatible token on **BNB Smart Chain Testnet**.
+> A 42 Tokenizer project that implements, tests, and deploys a fungible token on BNB Smart Chain Testnet.
 
-> Tokenizer42 is an educational test token. It has no monetary value and is not intended for production use, investment, fundraising, or sale.
+## Overview
 
-## Token summary
+Tokenizer42 is an educational Web3 project built for the **42 Tokenizer** subject. It demonstrates the complete lifecycle of a blockchain token:
+
+- implementing the token contract in Solidity;
+- compiling and testing it with Hardhat 3;
+- deploying it locally and on a public test network;
+- publishing the contract address on a blockchain explorer;
+- demonstrating standard token operations such as transfers and allowances;
+- keeping deployment credentials outside the repository.
+
+The token is deployed only on **BNB Smart Chain Testnet**. Testnet BNB and TK42 have no real monetary value.
+
+## Public deployment
 
 | Property | Value |
 |---|---|
 | Token name | `Tokenizer42` |
 | Ticker | `TK42` |
-| Standard | ERC-20 interface; BEP-20 compatible on BNB Smart Chain |
-| Target network | BNB Smart Chain Testnet, chain ID `97` |
-| Language | Solidity |
-| Framework | Hardhat 3 with TypeScript and ethers |
-| Deployment | Hardhat Ignition |
-| Base contract | OpenZeppelin `ERC20` |
+| Standard | BEP-20 / ERC-20-compatible fungible token |
+| Network | BNB Smart Chain Testnet |
+| Chain ID | `97` |
 | Decimals | `18` |
-| Default initial supply | `1,000,000 TK42` |
-| Supply policy | Fixed; minted once during construction |
-| Initial holder | Deployment account |
-| Owner/admin roles | None |
-| Upgradeability | None |
+| Initial supply | `1,000,000 TK42` |
+| Contract address | `0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720` |
+| Explorer | [View the contract on BscScan Testnet](https://testnet.bscscan.com/address/0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720) |
 
-## Platform choice
+## Design choices
 
-BNB Smart Chain Testnet was selected because it is a public EVM-compatible test network. It supports Solidity and the ERC-20-compatible BEP-20 token model while allowing deployment and evaluation with testnet funds rather than real money. Its explorer can show the smart-contract address, network, ticker, supply, holders, transactions, and emitted events.
+### Why the name Tokenizer42?
 
-Other EVM platforms could run the same interface, but BNB Smart Chain Testnet matches the project context and provides a straightforward public demonstration through BscScan Testnet.
+The subject requires the token name to contain `42`. **Tokenizer42** directly identifies the project and its educational purpose, while `TK42` provides a short and recognizable ticker.
 
-## Language and tools
+### Why BNB Smart Chain Testnet?
 
-- **Solidity** implements the token on an EVM-compatible blockchain.(Ethereum Virtual Machine)
-- **OpenZeppelin ERC20** supplies reviewed standard balance, transfer, allowance, and event logic instead of duplicating that logic manually.
-- **Hardhat 3** compiles, tests, runs a local chain, connects to BNB Smart Chain Testnet, and manages deployment.
-- **TypeScript and ethers** are used for readable automated tests and interaction scripts.
-- **Hardhat Ignition** defines a reproducible deployment with an explicit initial-supply parameter.
+BNB Smart Chain was selected because it supports EVM smart contracts and token standards compatible with ERC-20. The testnet allows the contract to be deployed and demonstrated publicly without using real money.
 
-## Token behavior
+### Why Solidity?
 
-The constructor accepts an `initialSupply` in the smallest unit. A zero supply is rejected. The complete non-zero supply is then minted to the deployment account.
+Solidity is the principal smart-contract language for EVM-compatible networks. It provides the language features and ecosystem needed to implement a standard fungible token.
 
-The token exposes the standard ERC-20 actions inherited from OpenZeppelin:
+### Why Hardhat 3?
 
-- `name`, `symbol`, `decimals`, `totalSupply`, and `balanceOf`;
-- `transfer`;
-- `approve` and `allowance`;
-- `transferFrom`.
+Hardhat is used as the development and deployment environment because it provides:
 
-There is no public mint function. The contract also has no blacklist, pause, transfer fee, tax, freeze, forced transfer, proxy, or upgrade mechanism.
+- Solidity compilation;
+- automated tests;
+- a local blockchain node;
+- scripted interaction with contracts;
+- Hardhat Ignition deployments;
+- encrypted configuration variables through the Hardhat keystore.
 
-## Ownership and privileges
+### Token purpose
 
-The contract does not use `Ownable` or `AccessControl`. The deployment account receives the initial supply but receives no special contract privileges. It has the same token functions as every other holder and cannot create more tokens or alter another holder's balance.
+TK42 is a demonstration token created to validate standard fungible-token behavior. It is not presented as money, an investment, company equity, or a claim on real-world assets.
 
 ## Repository structure
 
 ```text
 .
 ├── README.md
-├── .gitignore
-├── .nvmrc
 ├── code/
 │   └── TokenizerToken.sol
-├── documentation/
-│   ├── README.md
-│   ├── usage.md
-│   ├── deployment.md
-│   ├── security.md
-│   └── evaluation-checklist.md
-└── deployment/
-    ├── README.md
-    ├── hardhat.config.ts
-    ├── package.json
-    ├── tsconfig.json
-    ├── parameters.example.json
-    ├── public-deployment.template.json
-    ├── ignition/modules/TokenizerToken.ts
-    ├── scripts/inspect-token.ts
-    ├── scripts/transfer-token.ts
-    └── test/TokenizerToken.ts
+├── deployment/
+│   ├── contracts/                 # synchronized Hardhat copy
+│   ├── ignition/
+│   │   └── modules/
+│   ├── scripts/
+│   ├── test/
+│   ├── hardhat.config.ts
+│   └── package.json
+└── documentation/
 ```
 
-The authoritative evaluated source is `code/TokenizerToken.sol`. Hardhat 3 requires source files to stay inside the Hardhat project, so the deployment scripts automatically synchronize it to `deployment/contracts/TokenizerToken.sol` before compilation, tests, local-node startup, and deployment. Edit only the file in `code/`; the deployment copy is reproducible.
+The authoritative Solidity source is:
 
-Generated dependencies and output (`node_modules`, `artifacts`, `cache`, deployment journals), secrets, nested Git data, and video files are excluded from the submission.
+```text
+code/TokenizerToken.sol
+```
 
-## Install, compile, and test
+Hardhat cannot compile a Solidity source located outside its project directory. The deployment workspace therefore synchronizes the authoritative source into:
 
-Node.js 22 or later is required.
+```text
+deployment/contracts/TokenizerToken.sol
+```
+
+Do not edit the synchronized copy directly.
+
+## Prerequisites
+
+Install the following tools before running the project:
+
+- Node.js and npm;
+- Git;
+- MetaMask or another EVM-compatible wallet;
+- a dedicated account funded only with testnet BNB for public deployment.
+
+No real cryptocurrency is required.
+
+## Installation
 
 ```bash
-nvm use
 cd deployment
 npm install
+```
+
+Confirm that the local Hardhat installation is available:
+
+```bash
+npx hardhat --version
+```
+
+Use `npx hardhat`, not a globally installed `hardhat` command.
+
+## Contract synchronization
+
+Synchronize the authoritative contract manually with:
+
+```bash
+npm run sync:contract
+```
+
+The normal compile, test, local-node, and deployment scripts synchronize it automatically.
+
+## Compile and test
+
+```bash
 npm run compile
 npm test
 ```
 
-The tests cover:
+The tests should cover the token metadata and the principal fungible-token operations:
 
-- name, ticker, decimals, supply, and deployer balance;
-- transfer and `Transfer` event;
-- approval, allowance, and `transferFrom`;
-- zero initial supply;
-- insufficient balance;
-- zero-address receiver;
-- insufficient allowance.
+- `name`, `symbol`, `decimals`, `totalSupply`, and `balanceOf`;
+- `transfer`;
+- `approve` and `allowance`;
+- `transferFrom`.
 
 ## Local deployment
 
-Start a persistent local node:
+Start a local Hardhat node:
 
 ```bash
-cd deployment
 npm run node
 ```
 
-In another terminal:
+Leave it running. In a second terminal:
 
 ```bash
 cd deployment
 npm run deploy:local
 ```
 
-A local Hardhat address is only for development and must not be recorded as the mandatory public deployment.
+This local workflow should be completed before deploying to a public test network.
 
-## BNB Smart Chain Testnet deployment
+## BNB Smart Chain Testnet configuration
 
-Store the RPC endpoint and the private key of a dedicated test-only account in the Hardhat keystore:
+### 1. Prepare a test-only wallet
+
+Use a dedicated MetaMask account that contains no real assets. Fund it with testnet BNB only.
+
+### 2. Store secrets in the Hardhat keystore
 
 ```bash
 cd deployment
 npx hardhat keystore set BSC_TESTNET_RPC_URL
 npx hardhat keystore set BSC_TESTNET_PRIVATE_KEY
 ```
-BSC_TESTNET_RPC_URL: https://bsc-testnet-dataseed.bnbchain.org
-https://metamask.io/
-moz-extension://6b205840-bcbd-490e-8d66-ad68e0c5058f/home.html#/unlock
-lientranthikim@gmail.com
-9NHO10thuong
 
-Since you use Firefox:
+Enter the RPC endpoint as the first secret and the private key of the dedicated testnet account as the second secret.
 
-On metamask.io, click Get MetaMask.
-Select Firefox and install the official MetaMask extension.
-After installation, click the MetaMask fox icon in Firefox’s extensions menu.
-Choose Create a new wallet and complete the setup. Carefully store the Secret Recovery Phrase offline and never share it.
+Never place an RPC API key, private key, wallet password, or recovery phrase in source code, a `.env` file committed to Git, terminal screenshots, or project documentation.
 
-Once your wallet is open, create the dedicated deployment account:
+### 3. Verify the stored variable names
 
-Click the account selector at the top of MetaMask.
-Select Add account or hardware wallet.
-Select Ethereum account or Create new account.
-Name it:
-BSC Testnet Deployer
-Click Create.
+```bash
+npx hardhat keystore list
+```
 
-This Ethereum-format account can be used on BNB Smart Chain Testnet. Keep it exclusively for testnet deployment and do not transfer real funds into it.
+The list should include:
 
+```text
+BSC_TESTNET_RPC_URL
+BSC_TESTNET_PRIVATE_KEY
+```
 
-Deploy:
+The command displays variable names, not their secret values.
+
+## Public testnet deployment
+
+Deploy with the default initial supply:
 
 ```bash
 npm run deploy:bsc-testnet
 ```
 
-No private key, RPC credential, password, API key, seed phrase, or populated `.env` file may be committed.
-
-## Inspect and demonstrate the deployed token
+To supply custom Ignition parameters:
 
 ```bash
-TOKEN_ADDRESS=0x... npm run inspect:bsc-testnet
+npx hardhat ignition deploy ignition/modules/TokenizerToken.ts \
+  --network bscTestnet \
+  --parameters parameters.example.json
 ```
 
-Send a small testnet transfer:
+After deployment:
+
+1. record the contract address and network in this README;
+2. open the address on BscScan Testnet;
+3. copy `public-deployment.template.json` to `public-deployment.json`;
+4. replace its placeholders with public deployment data only.
+
+Do not publish private keys or keystore passwords.
+
+## Inspect the deployed token
 
 ```bash
-TOKEN_ADDRESS=0x... \
-RECIPIENT_ADDRESS=0x... \
+TOKEN_ADDRESS=0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720 \
+npm run inspect:bsc-testnet
+```
+
+The inspection should report the token name, ticker, decimals, total supply, and deployer balance.
+
+## Demonstrate a transfer
+
+Use a recipient address different from the deployer so that the balance change is visible:
+
+```bash
+TOKEN_ADDRESS=0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720 \
+RECIPIENT_ADDRESS=0xRECIPIENT_ADDRESS \
 TOKEN_AMOUNT=1 \
 npm run transfer:bsc-testnet
 ```
 
-Open the resulting contract and transaction on BscScan Testnet. Show the `TK42` ticker, total supply, balances, transaction status, and `Transfer` event.
+The command returns a transaction hash. Open that hash on BscScan Testnet to verify the transaction status and emitted `Transfer` event.
 
-## Public deployment record
+## ERC-20/BEP-20 command-line demonstration
 
-This table must be completed with real values after a successful public testnet deployment. No public deployment data was present in the supplied archive, so no address has been invented here.
+The reusable script `deployment/scripts/erc20-cli.ts` supports the following actions:
 
-| Field | Value |
-|---|---|
-| Network | BNB Smart Chain Testnet |
-| Chain ID | `97` |
-| Contract address | `ADD_AFTER_PUBLIC_DEPLOYMENT` |
-| Explorer contract page | `ADD_AFTER_PUBLIC_DEPLOYMENT` |
-| Deployment transaction | `ADD_AFTER_PUBLIC_DEPLOYMENT` |
-| Deployer public address | `ADD_AFTER_PUBLIC_DEPLOYMENT` |
-| Deployment date | `YYYY-MM-DD` |
-| Token name shown by explorer | `Tokenizer42` |
-| Ticker shown by explorer | `TK42` |
+```text
+info
+transfer
+approve
+allowance
+transferFrom
+```
 
-After deployment, also copy `deployment/public-deployment.template.json` to `deployment/public-deployment.json` and replace every placeholder.
+Define the public addresses used by the commands:
 
-## Multisig bonus
+```bash
+export TOKEN_ADDRESS="0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720"
+export OWNER_ADDRESS="0x5784aaaBB5BFf17659aC3dEC9d7d97E9E3010395"
+export RECIPIENT_ADDRESS="0xDIFFERENT_TESTNET_ACCOUNT"
+```
 
-A multisignature system is not implemented in this archive. The bonus should be attempted only after the mandatory contract, documentation, error handling, public deployment, explorer record, and testnet demonstration are complete and working.
+### Read token metadata and an account balance
 
-## License
+```bash
+ACTION=info \
+ACCOUNT_ADDRESS="$OWNER_ADDRESS" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
+```
 
-The contract uses the MIT SPDX license identifier. Dependencies remain subject to their own licenses.
+### Transfer tokens
+
+```bash
+ACTION=transfer \
+RECIPIENT_ADDRESS="$RECIPIENT_ADDRESS" \
+TOKEN_AMOUNT="1" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
+```
+
+### Approve a spender
+
+```bash
+export SPENDER_ADDRESS="0xSPENDER_TESTNET_ACCOUNT"
+
+ACTION=approve \
+SPENDER_ADDRESS="$SPENDER_ADDRESS" \
+TOKEN_AMOUNT="5" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
+```
+
+`approve` sets the allowance to the supplied amount. It does not add that amount to an existing allowance.
+
+### Read an allowance
+
+```bash
+ACTION=allowance \
+OWNER_ADDRESS="$OWNER_ADDRESS" \
+SPENDER_ADDRESS="$SPENDER_ADDRESS" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
+```
+
+### Execute `transferFrom`
+
+For a complete demonstration, configure the spender as a second Hardhat signer and run the command with its signer index:
+
+```bash
+SIGNER_INDEX=1 \
+ACTION=transferFrom \
+FROM_ADDRESS="$OWNER_ADDRESS" \
+RECIPIENT_ADDRESS="$RECIPIENT_ADDRESS" \
+TOKEN_AMOUNT="1" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
+```
+
+A successful call should:
+
+- decrease the owner's token balance;
+- increase the recipient's token balance;
+- decrease the spender's remaining allowance by the transferred amount.
+
+Using the same address as owner and recipient creates a self-transfer: the transaction is valid and the allowance is consumed, but the account's net token balance does not change.
+
+## Security principles
+
+- Use test networks only for this project.
+- Use a dedicated deployment wallet with no real assets.
+- Never commit private keys, seed phrases, passwords, API keys, or keystore files.
+- Never expose secrets in screenshots, shell history, documentation, or issue reports.
+- Validate addresses and amounts before submitting a transaction.
+- Review ownership and privileged functions before deployment.
+- Keep dependencies and generated artifacts out of the repository unless explicitly required.
+
+A typical `.gitignore` should exclude at least:
+
+```gitignore
+node_modules/
+.env
+artifacts/
+cache/
+ignition/deployments/
+*.log
+```
+
+Public contract addresses and transaction hashes are safe to publish. Wallet private keys and recovery phrases are not.
+
+## Evaluation checklist
+
+- [x] Token name contains `42`.
+- [x] Solidity source is stored in `code/`.
+- [x] Deployment tooling is separated into `deployment/`.
+- [x] Project documentation is stored in `documentation/`.
+- [x] The token follows the fungible-token standard used by BNB Smart Chain.
+- [x] The contract can be compiled and tested locally.
+- [x] Minimal token operations can be demonstrated from the terminal.
+- [x] The token is deployed on a public test blockchain.
+- [x] The network and public contract address are documented.
+- [x] No real money is required.
+- [ ] Optional multisignature bonus, when implemented and documented.
+
+## Bonus direction
+
+The optional subject bonus proposes adapting a multisignature mechanism to the mandatory implementation. This should be attempted only after the complete mandatory project is stable, tested, documented, and demonstrable.
+
+## Disclaimer
+
+Tokenizer42 is an educational testnet project. TK42 has no guaranteed value, utility, ownership rights, or financial backing. Nothing in this repository is financial or investment advice.
