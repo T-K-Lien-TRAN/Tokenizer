@@ -4,10 +4,6 @@ import { configVariable, defineConfig } from "hardhat/config";
 
 export default defineConfig({
   plugins: [hardhatToolboxMochaEthersPlugin],
-
-  // Hardhat 3 requires every project file to remain inside the Hardhat
-  // project directory. npm scripts synchronize the evaluated source from
-  // ../code into ./contracts before compilation, testing, or deployment.
   paths: {
     sources: {
       solidity: "./contracts",

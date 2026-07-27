@@ -29,6 +29,8 @@ The token is deployed only on **BNB Smart Chain Testnet**. Testnet BNB and TK42 
 | Contract address | `0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720` |
 | Explorer | [View the contract on BscScan Testnet](https://testnet.bscscan.com/address/0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720) |
 
+| Second contract | (https://testnet.bscscan.com/address/0x2516bF8448f8333e1DB273626Cf646cC739d0724)
+
 ## Design choices
 
 ### Why the name Tokenizer42?
@@ -164,6 +166,7 @@ This local workflow should be completed before deploying to a public test networ
 Use a dedicated MetaMask account that contains no real assets. Fund it with testnet BNB only.
 
 ### 2. Store secrets in the Hardhat keystore
+Use these commands to set up manually the secrets or save them in the .env file. In this project, I use .env file.
 
 ```bash
 cd deployment
@@ -203,18 +206,16 @@ To supply custom Ignition parameters:
 ```bash
 npx hardhat ignition deploy ignition/modules/TokenizerToken.ts \
   --network bscTestnet \
-  --parameters parameters.example.json
 ```
+Deploy a second contract with a different supply: Use below commands to create this contract: https://testnet.bscscan.com/address/0x2516bF8448f8333e1DB273626Cf646cC739d0724
 
-After deployment:
-
-1. record the contract address and network in this README;
-2. open the address on BscScan Testnet;
-3. copy `public-deployment.template.json` to `public-deployment.json`;
-4. replace its placeholders with public deployment data only.
-
-Do not publish private keys or keystore passwords.
-
+```bash
+npx hardhat ignition deploy ignition/modules/TokenizerToken.ts \
+  --network bscTestnet \
+  --parameters parameters.example.json \
+  --deployment-id bsc-testnet-custom-supply
+```
+  
 ## Inspect the deployed token
 
 ```bash
@@ -235,6 +236,11 @@ TOKEN_AMOUNT=1 \
 npm run transfer:bsc-testnet
 ```
 
+TOKEN_ADDRESS=0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720 \
+RECIPIENT_ADDRESS=0x2516bF8448f8333e1DB273626Cf646cC739d0724 \
+TOKEN_AMOUNT=1 \
+npm run transfer:bsc-testnet
+
 The command returns a transaction hash. Open that hash on BscScan Testnet to verify the transaction status and emitted `Transfer` event.
 
 ## ERC-20/BEP-20 command-line demonstration
@@ -254,7 +260,7 @@ Define the public addresses used by the commands:
 ```bash
 export TOKEN_ADDRESS="0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720"
 export OWNER_ADDRESS="0x5784aaaBB5BFf17659aC3dEC9d7d97E9E3010395"
-export RECIPIENT_ADDRESS="0xDIFFERENT_TESTNET_ACCOUNT"
+export RECIPIENT_ADDRESS="0x2516bF8448f8333e1DB273626Cf646cC739d0724"
 ```
 
 ### Read token metadata and an account balance
@@ -277,7 +283,7 @@ npx hardhat run scripts/erc20-cli.ts --network bscTestnet
 ### Approve a spender
 
 ```bash
-export SPENDER_ADDRESS="0xSPENDER_TESTNET_ACCOUNT"
+export SPENDER_ADDRESS="$OWNER_ADDRESS"
 
 ACTION=approve \
 SPENDER_ADDRESS="$SPENDER_ADDRESS" \
@@ -298,10 +304,10 @@ npx hardhat run scripts/erc20-cli.ts --network bscTestnet
 
 ### Execute `transferFrom`
 
-For a complete demonstration, configure the spender as a second Hardhat signer and run the command with its signer index:
+For a complete demonstration, configure the spender as a first Hardhat signer and run the command with its signer index:
 
 ```bash
-SIGNER_INDEX=1 \
+SIGNER_INDEX=0 \
 ACTION=transferFrom \
 FROM_ADDRESS="$OWNER_ADDRESS" \
 RECIPIENT_ADDRESS="$RECIPIENT_ADDRESS" \
