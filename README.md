@@ -157,6 +157,26 @@ cd deployment
 npm run deploy:local
 ```
 
+```bash
+ACTION=info \
+npx hardhat run scripts/erc20-cli.ts --network localhost
+```
+
+```bash
+ACTION=network \
+npx hardhat run scripts/erc20-cli.ts --network localhost
+```
+
+```bash
+ACTION=accounts \
+npx hardhat run scripts/erc20-cli.ts --network localhost
+```
+
+```bash
+ACTION=balances \
+npx hardhat run scripts/erc20-cli.ts --network localhost
+```
+
 This local workflow should be completed before deploying to a public test network.
 
 ## BNB Smart Chain Testnet configuration
