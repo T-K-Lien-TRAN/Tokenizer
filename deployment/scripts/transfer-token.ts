@@ -11,7 +11,7 @@ if (recipientAddress === undefined || recipientAddress.trim() === "") {
   throw new Error("Set RECIPIENT_ADDRESS to the public recipient address.");
 }
 
-const { ethers } = await network.connect();
+const { ethers } = await network.create();
 if (!ethers.isAddress(tokenAddress)) {
   throw new Error(`Invalid TOKEN_ADDRESS: ${tokenAddress}`);
 }

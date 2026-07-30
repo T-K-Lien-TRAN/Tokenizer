@@ -2,7 +2,7 @@ import { expect } from "chai";
 import type { Contract } from "ethers";
 import { network } from "hardhat";
 
-const { ethers } = await network.connect();
+const { ethers } = await network.create();
 const INITIAL_SUPPLY = ethers.parseUnits("1000000", 18);
 
 describe("TokenizerToken", function () {
@@ -31,9 +31,6 @@ describe("TokenizerToken", function () {
 
     expect(await token.balanceOf(deployer.address)).to.equal(INITIAL_SUPPLY);
     expect(await token.balanceOf(alice.address)).to.equal(0n);
-
-    // No public mint function exists. The total supply can only decrease if a
-    // burn mechanism is explicitly added, which this contract does not do.
     expect(await token.totalSupply()).to.equal(INITIAL_SUPPLY);
   });
 

@@ -136,6 +136,8 @@ async function main(): Promise<void> {
 
   const decimals = Number(await token.decimals());
   const symbol = await token.symbol();
+  const transactionConfirmations =
+    chainId === BSC_TESTNET_CHAIN_ID ? 2 : 1;
 
   const parseAmount = (amount: string): bigint => {
     const parsedAmount = ethers.parseUnits(amount, decimals);
@@ -258,22 +260,35 @@ async function main(): Promise<void> {
     const recipientBefore = await token.balanceOf(recipient);
 
     const transaction = await token.transfer(recipient, amount);
-    const receipt = await transaction.wait();
+
+    const receipt = await transaction.wait(transactionConfirmations);
+
+    if (!receipt || receipt.status !== 1) {
+      throw new Error(`Transfer transaction failed: ${transaction.hash}`);
+    }
+
+    const senderAfter = await token.balanceOf(callerAddress, {
+      blockTag: receipt.blockNumber,
+    });
+    const recipientAfter = await token.balanceOf(recipient, {
+      blockTag: receipt.blockNumber,
+    });
 
     printContext();
     console.log("Transaction:", transaction.hash);
-    console.log("Block:", receipt?.blockNumber);
+    console.log("Block:", receipt.blockNumber);
+    console.log("Confirmations requested:", transactionConfirmations);
     console.log("Recipient:", recipient);
     console.log("Transferred:", formatAmount(amount), symbol);
     console.log(
       "Sender balance:",
-      formatAmount(await token.balanceOf(callerAddress)),
+      formatAmount(senderAfter),
       symbol,
       `(before: ${formatAmount(senderBefore)})`,
     );
     console.log(
       "Recipient balance:",
-      formatAmount(await token.balanceOf(recipient)),
+      formatAmount(recipientAfter),
       symbol,
       `(before: ${formatAmount(recipientBefore)})`,
     );
@@ -287,12 +302,20 @@ async function main(): Promise<void> {
 
     const allowanceBefore = await token.allowance(callerAddress, spender);
     const transaction = await token.approve(spender, amount);
-    const receipt = await transaction.wait();
-    const allowanceAfter = await token.allowance(callerAddress, spender);
+    const receipt = await transaction.wait(transactionConfirmations);
+
+    if (!receipt || receipt.status !== 1) {
+      throw new Error(`Approve transaction failed: ${transaction.hash}`);
+    }
+
+    const allowanceAfter = await token.allowance(callerAddress, spender, {
+      blockTag: receipt.blockNumber,
+    });
 
     printContext();
     console.log("Transaction:", transaction.hash);
-    console.log("Block:", receipt?.blockNumber);
+    console.log("Block:", receipt.blockNumber);
+    console.log("Confirmations requested:", transactionConfirmations);
     console.log("Owner:", callerAddress);
     console.log("Spender:", spender);
     console.log("Approved amount:", formatAmount(amount), symbol);
@@ -327,35 +350,74 @@ async function main(): Promise<void> {
     const recipient = ethers.getAddress(required("RECIPIENT_ADDRESS"));
     const amount = parseAmount(required("TOKEN_AMOUNT"));
 
+    if (from === callerAddress) {
+      console.warn(
+        "Warning: FROM_ADDRESS and caller/spender are the same account. " +
+          "This is valid, but it does not demonstrate delegated spending " +
+          "between two different accounts.",
+      );
+    }
+
     const allowanceBefore = await token.allowance(from, callerAddress);
     const fromBefore = await token.balanceOf(from);
     const recipientBefore = await token.balanceOf(recipient);
 
+    if (allowanceBefore < amount) {
+      throw new Error(
+        `Insufficient allowance. Caller ${callerAddress} may spend ` +
+          `${formatAmount(allowanceBefore)} ${symbol} from ${from}, but ` +
+          `${formatAmount(amount)} ${symbol} was requested.`,
+      );
+    }
+
+    if (fromBefore < amount) {
+      throw new Error(
+        `Insufficient owner balance. Account ${from} has ` +
+          `${formatAmount(fromBefore)} ${symbol}, but ` +
+          `${formatAmount(amount)} ${symbol} was requested.`,
+      );
+    }
+
     const transaction = await token.transferFrom(from, recipient, amount);
-    const receipt = await transaction.wait();
+    const receipt = await transaction.wait(transactionConfirmations);
+
+    if (!receipt || receipt.status !== 1) {
+      throw new Error(`transferFrom transaction failed: ${transaction.hash}`);
+    }
+
+    const allowanceAfter = await token.allowance(from, callerAddress, {
+      blockTag: receipt.blockNumber,
+    });
+    const fromAfter = await token.balanceOf(from, {
+      blockTag: receipt.blockNumber,
+    });
+    const recipientAfter = await token.balanceOf(recipient, {
+      blockTag: receipt.blockNumber,
+    });
 
     printContext();
     console.log("Transaction:", transaction.hash);
-    console.log("Block:", receipt?.blockNumber);
+    console.log("Block:", receipt.blockNumber);
+    console.log("Confirmations requested:", transactionConfirmations);
     console.log("Caller/spender:", callerAddress);
     console.log("From:", from);
     console.log("Recipient:", recipient);
     console.log("Transferred:", formatAmount(amount), symbol);
     console.log(
       "Remaining allowance:",
-      formatAmount(await token.allowance(from, callerAddress)),
+      formatAmount(allowanceAfter),
       symbol,
       `(before: ${formatAmount(allowanceBefore)})`,
     );
     console.log(
       "Owner balance:",
-      formatAmount(await token.balanceOf(from)),
+      formatAmount(fromAfter),
       symbol,
       `(before: ${formatAmount(fromBefore)})`,
     );
     console.log(
       "Recipient balance:",
-      formatAmount(await token.balanceOf(recipient)),
+      formatAmount(recipientAfter),
       symbol,
       `(before: ${formatAmount(recipientBefore)})`,
     );
