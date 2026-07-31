@@ -11,8 +11,6 @@
     "node": "npm run sync:contract && hardhat node",
     "deploy:local": "npm run sync:contract && hardhat ignition deploy ignition/modules/TokenizerToken.ts --network localhost",
     "deploy:bsc-testnet": "npm run sync:contract && hardhat ignition deploy ignition/modules/TokenizerToken.ts --network bscTestnet",
-    "inspect:bsc-testnet": "hardhat run scripts/inspect-token.ts --network bscTestnet",
-    "transfer:bsc-testnet": "hardhat run scripts/transfer-token.ts --network bscTestnet",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

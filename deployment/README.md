@@ -7,7 +7,7 @@ This folder is the Hardhat 3 workspace used to compile, test, deploy, inspect, a
 ```bash
 cd deployment
 rm -rf node_modules package-lock.json
-npm install
+npm ci
 ```
 
 The toolbox installs its compatible Hardhat plugins as peer dependencies. Do not add or pin the bundled plugins (`hardhat-ethers`, `hardhat-ignition`, `hardhat-verify`, and related packages) separately unless the code imports them directly. Independent pins can create an `ERESOLVE` conflict.
@@ -29,6 +29,7 @@ The normal compile, test, node, and deployment scripts run it automatically.
 ```bash
 npm run compile
 npm test
+np typecheck
 npm run node
 ```
 
@@ -69,16 +70,18 @@ After deployment, copy `public-deployment.template.json` to `public-deployment.j
 ## Inspect the token
 
 ```bash
-TOKEN_ADDRESS=0x... npm run inspect:bsc-testnet
+ACTION=info \
+ACCOUNT_ADDRESS="$OWNER_ADDRESS" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
 ```
 
 ## Demonstrate a transfer
 
 ```bash
-TOKEN_ADDRESS=0x... \
-RECIPIENT_ADDRESS=0x... \
-TOKEN_AMOUNT=1 \
-npm run transfer:bsc-testnet
+ACTION=transfer \
+RECIPIENT_ADDRESS="$RECIPIENT_ADDRESS" \
+TOKEN_AMOUNT="1" \
+npx hardhat run scripts/erc20-cli.ts --network bscTestnet
 ```
 
 The transaction hash can then be opened on BscScan Testnet to show the emitted `Transfer` event and the changed balances.
