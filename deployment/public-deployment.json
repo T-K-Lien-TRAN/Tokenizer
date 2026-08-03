@@ -1,11 +1,11 @@
 {
   "network": "BNB Smart Chain Testnet",
   "chainId": 97,
-  "contractAddress": "ADD_AFTER_PUBLIC_DEPLOYMENT",
-  "deploymentTransaction": "ADD_AFTER_PUBLIC_DEPLOYMENT",
-  "deployerAddress": "ADD_AFTER_PUBLIC_DEPLOYMENT",
-  "deploymentDate": "YYYY-MM-DD",
+  "contractAddress": "0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720",
+  "deploymentTransaction": "0x92b1b350795d96921b8c382ab2c2d8ec4b8030debc60e2d8fd5bc1930f0b4daf",
+  "deployerAddress": "0x5784aaaBB5BFf17659aC3dEC9d7d97E9E3010395",
+  "deploymentDate": "2026-08-03",
   "tokenName": "Tokenizer42",
   "ticker": "TK42",
-  "explorerUrl": "https://testnet.bscscan.com/address/ADD_AFTER_PUBLIC_DEPLOYMENT"
+  "explorerUrl": "https://testnet.bscscan.com/address/0x9523319bf49D550ADe54475d3d7Ea56B5C2eE720"
 }

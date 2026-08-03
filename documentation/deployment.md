@@ -14,8 +14,9 @@ Real money is not required and must not be used for this project.
 ```bash
 cd deployment
 rm -rf node_modules package-lock.json
-npm install
+npm ci
 npm run compile
+npm run typecheck
 npm test
 ```
 

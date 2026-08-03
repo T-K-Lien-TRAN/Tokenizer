@@ -23,6 +23,3 @@
 - [ ] BscScan displays `Tokenizer42` and `TK42`.
 - [ ] A real testnet transfer can be demonstrated.
 
-## Bonus
-
-Multisig is not included in this archive. It should be attempted only after every mandatory item above is complete and working.
